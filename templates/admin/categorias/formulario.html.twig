@@ -1,0 +1,33 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block titulo %}{{ titulo }} - Admin{% endblock %}
+
+{% block cuerpo_admin %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ titulo }}</h2>
+        <a href="{{ path('admin_categorias_listar') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(formulario) }}
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ form_row(formulario.nombre) }}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> Guardar
+                    </button>
+                    <a href="{{ path('admin_categorias_listar') }}" class="btn btn-secondary ms-2">Cancelar</a>
+                </div>
+
+            {{ form_end(formulario) }}
+        </div>
+    </div>
+{% endblock %}

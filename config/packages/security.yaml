@@ -1,0 +1,68 @@
+security:
+    # Algoritmo de hashing para contraseñas
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # Proveedor de usuarios desde la entidad Usuario
+    providers:
+        proveedor_usuarios:
+            entity:
+                class: App\Entity\Usuario
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        # Firewall para la API JSON (sesión para el frontend React)
+        api:
+            pattern: ^/api
+            lazy: true
+            provider: proveedor_usuarios
+            entry_point: App\Security\ApiAuthenticationEntryPoint
+            json_login:
+                check_path: api_login
+                username_path: email
+                password_path: password
+
+        # Firewall principal con formulario de login
+        principal:
+            lazy: true
+            provider: proveedor_usuarios
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                default_target_path: /admin
+                enable_csrf: true
+            logout:
+                path: app_logout
+                target: /
+
+    # Control de acceso por rutas
+    access_control:
+        # Admin: solo ROLE_ADMIN
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        # API: registro es público
+        - { path: ^/api/registro, roles: PUBLIC_ACCESS, methods: [POST] }
+        # API: login es público
+        - { path: ^/api/login, roles: PUBLIC_ACCESS, methods: [POST] }
+        # API: crear intento de pago requiere usuario autenticado
+        - { path: ^/api/crear-intento-pago, roles: ROLE_USER, methods: [POST] }
+        # API: finalizar compra requiere usuario autenticado
+        - { path: ^/api/finalizar-compra, roles: ROLE_USER, methods: [POST] }
+        # API: lectura pública (GET)
+        - { path: ^/api, roles: PUBLIC_ACCESS, methods: [GET] }
+        # Cuenta de usuario
+        - { path: ^/cuenta, roles: ROLE_USER }
+        # Resto público
+        - { path: ^/, roles: PUBLIC_ACCESS }
+
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10

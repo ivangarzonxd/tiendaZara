@@ -1,0 +1,59 @@
+# ============================================================
+# .htaccess - Tienda Zara (Symfony + React)
+# ============================================================
+# L?gica:
+#   1. Si el archivo existe en disco (fotos, CSS, JS) -> servirlo directamente
+#   2. Rutas de Symfony (/api, /admin, /login, /logout) -> index.php
+#   3. Todo lo dem?s (la tienda) -> index.html (React)
+# ============================================================
+
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # --- Regla 1: Si el archivo f?sico existe, servirlo tal cual ---
+    # (fotos en /recursos, JS/CSS en /assets, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # --- Regla 2: Rutas que DEBEN pasar por Symfony (index.php) ---
+    RewriteRule ^api(/|$) index.php [QSA,L]
+    RewriteRule ^admin(/|$) index.php [QSA,L]
+    RewriteRule ^login$ index.php [QSA,L]
+    RewriteRule ^logout$ index.php [QSA,L]
+    RewriteRule ^cuenta(/|$) index.php [QSA,L]
+    RewriteRule ^_profiler(/|$) index.php [QSA,L]
+    RewriteRule ^_wdt(/|$) index.php [QSA,L]
+
+    # --- Regla 3: Todo lo dem?s -> React (index.html) ---
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# === Compresión GZIP ===
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# === Caché de navegador para assets estáticos ===
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg  "access plus 1 month"
+    ExpiresByType image/webp  "access plus 1 month"
+    ExpiresByType text/css    "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# === Headers de caché para imágenes ===
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|webp|png)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>

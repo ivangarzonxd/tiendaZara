@@ -1,0 +1,68 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block titulo %}Productos - Admin{% endblock %}
+
+{% block cuerpo_admin %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Productos</h2>
+        <a href="{{ path('admin_productos_nuevo') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Nuevo Producto
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Foto</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>{{ producto.id }}</td>
+                            <td>
+                                {% if producto.fotoPrincipal %}
+                                    <img src="/recursos/camisas/{{ producto.fotoPrincipal }}"
+                                         alt="{{ producto.nombre }}"
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                    <span class="text-muted">Sin foto</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ producto.nombre }}</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ producto.categoria.nombre }}</span>
+                            </td>
+                            <td>{{ producto.precio }} €</td>
+                            <td class="text-center">
+                                <a href="{{ path('admin_productos_editar', {id: producto.id}) }}"
+                                   class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ path('admin_productos_eliminar', {id: producto.id}) }}"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('¿Eliminar este producto?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('eliminar_' ~ producto.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No hay productos registrados</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

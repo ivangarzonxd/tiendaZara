@@ -1,0 +1,17 @@
+# Configuración de servicios
+parameters:
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            string $stripeSecretKey: '%stripe_secret_key%'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'

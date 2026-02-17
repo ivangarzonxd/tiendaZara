@@ -1,0 +1,65 @@
+{% extends 'admin/base_admin.html.twig' %}
+
+{% block titulo %}Panel de Administración{% endblock %}
+
+{% block cuerpo_admin %}
+    <h2 class="mb-4">Panel de Control</h2>
+
+    <div class="row g-4">
+        {# Tarjeta Productos #}
+        <div class="col-md-3">
+            <div class="card tarjeta-resumen text-white bg-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam fs-1"></i>
+                    <h3 class="mt-2">{{ totalProductos }}</h3>
+                    <p class="mb-0">Productos</p>
+                </div>
+                <a href="{{ path('admin_productos_listar') }}" class="card-footer text-white text-center text-decoration-none">
+                    Ver todos <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        {# Tarjeta Categorías #}
+        <div class="col-md-3">
+            <div class="card tarjeta-resumen text-white bg-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-tags fs-1"></i>
+                    <h3 class="mt-2">{{ totalCategorias }}</h3>
+                    <p class="mb-0">Categorías</p>
+                </div>
+                <a href="{{ path('admin_categorias_listar') }}" class="card-footer text-white text-center text-decoration-none">
+                    Ver todas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        {# Tarjeta Pedidos #}
+        <div class="col-md-3">
+            <div class="card tarjeta-resumen text-white bg-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-cart-check fs-1"></i>
+                    <h3 class="mt-2">{{ totalPedidos }}</h3>
+                    <p class="mb-0">Pedidos</p>
+                </div>
+                <div class="card-footer text-white text-center">
+                    Total registrados
+                </div>
+            </div>
+        </div>
+
+        {# Tarjeta Usuarios #}
+        <div class="col-md-3">
+            <div class="card tarjeta-resumen text-white bg-info">
+                <div class="card-body text-center">
+                    <i class="bi bi-people fs-1"></i>
+                    <h3 class="mt-2">{{ totalUsuarios }}</h3>
+                    <p class="mb-0">Usuarios</p>
+                </div>
+                <div class="card-footer text-white text-center">
+                    Registrados
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

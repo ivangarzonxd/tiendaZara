@@ -1,0 +1,72 @@
+services:
+  php-apache:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tienda_zara_php
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - symfony_var:/var/www/html/var
+      - symfony_vendor:/var/www/html/vendor
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: 0
+      APP_SECRET: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
+      DATABASE_URL: "mysql://zara_usuario:zara_clave@mysql:3306/tienda_zara?serverVersion=8.0&charset=utf8mb4"
+      CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$$"
+      DEFAULT_URI: "http://localhost:8080"
+      STRIPE_SECRET_KEY: "${STRIPE_SECRET_KEY}"
+    networks:
+      - red_zara
+
+  mysql:
+    image: mysql:8.0
+    container_name: tienda_zara_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_clave
+      MYSQL_DATABASE: tienda_zara
+      MYSQL_USER: zara_usuario
+      MYSQL_PASSWORD: zara_clave
+    ports:
+      - "3307:3306"
+    volumes:
+      - datos_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_clave"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - red_zara
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: tienda_zara_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: zara_usuario
+      PMA_PASSWORD: zara_clave
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - red_zara
+
+volumes:
+  symfony_var:
+  symfony_vendor:
+  datos_mysql:
+
+networks:
+  red_zara:
+    driver: bridge
