@@ -1,0 +1,76 @@
+name: CI - Tienda Zara
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Backend – Symfony 7 / PHP 8.2
+  # ──────────────────────────────────────────────
+  backend:
+    name: 🐘 Backend (Symfony)
+    runs-on: ubuntu-latest
+
+    env:
+      APP_ENV: test
+      APP_DEBUG: 0
+      APP_SECRET: ci-dummy-secret-value-1234567890
+      DATABASE_URL: "sqlite:///%kernel.project_dir%/var/data_test.db"
+      CORS_ALLOW_ORIGIN: "^https?://localhost(:[0-9]+)?$"
+      DEFAULT_URI: "http://localhost"
+      STRIPE_SECRET_KEY: "sk_test_dummy_value_for_ci_only"
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 🐘 Configurar PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: intl, pdo_sqlite, mbstring, xml, ctype, iconv, bcmath, zip
+          coverage: none
+
+      - name: 📦 Cache de Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: 📦 Instalar dependencias Composer
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: ✅ Lint del contenedor de servicios
+        run: php bin/console lint:container
+
+  # ──────────────────────────────────────────────
+  # Frontend – React 18 / Vite
+  # ──────────────────────────────────────────────
+  frontend:
+    name: ⚛️ Frontend (React)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Instalar dependencias npm
+        run: npm ci
+
+      - name: 🏗️ Build de producción
+        run: npm run build
