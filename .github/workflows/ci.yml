@@ -34,7 +34,10 @@ jobs:
           extensions: intl, pdo_sqlite, mbstring, xml, ctype, iconv, bcmath, zip
           coverage: none
 
-      - name: 📦 Cache de Composer
+      - name: � Crear archivo .env para Symfony
+        run: cp .env.example .env
+
+      - name: �📦 Cache de Composer
         uses: actions/cache@v4
         with:
           path: vendor
