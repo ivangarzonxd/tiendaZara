@@ -1,0 +1,26 @@
+# Dependencias (se instalan dentro del contenedor)
+vendor/
+frontend/node_modules/
+
+# Caché y logs de Symfony
+var/
+
+# Git
+.git/
+.gitignore
+
+# IDE / OS
+.idea/
+.vscode/
+*.log
+.DS_Store
+
+# Docker (evitar recursión)
+docker-compose.yml
+compose.override.yaml
+Dockerfile
+
+# Archivos innecesarios para la imagen
+README.md
+.env
+.env.*
