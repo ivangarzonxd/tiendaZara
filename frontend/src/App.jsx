@@ -4,6 +4,7 @@ import ContenedorPrincipal from './components/ContenedorPrincipal';
 import CarritoPanel from './components/CarritoPanel';
 import AuthModal from './components/AuthModal';
 import PieDePagina from './components/PieDePagina';
+import PanelAdminWrapper from './components/PanelAdminWrapper';
 
 /**
  * Componente raíz de la aplicación.
@@ -17,6 +18,7 @@ export default function App() {
       <PieDePagina />
       <CarritoPanel />
       <AuthModal />
+      <PanelAdminWrapper />
     </CarritoProvider>
   );
 }

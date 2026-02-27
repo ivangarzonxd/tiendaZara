@@ -15,7 +15,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        # Firewall para la API JSON (sesión para el frontend React)
+        # Firewall único para toda la API (sesión con cookie)
         api:
             pattern: ^/api
             lazy: true
@@ -25,36 +25,27 @@ security:
                 check_path: api_login
                 username_path: email
                 password_path: password
+            logout:
+                path: api_logout
 
-        # Firewall principal con formulario de login
+        # Firewall por defecto (archivos estáticos, React)
         principal:
             lazy: true
-            provider: proveedor_usuarios
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                default_target_path: /admin
-                enable_csrf: true
-            logout:
-                path: app_logout
-                target: /
 
     # Control de acceso por rutas
     access_control:
-        # Admin: solo ROLE_ADMIN
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        # API: registro es público
+        # API Admin: solo ROLE_ADMIN
+        - { path: ^/api/admin, roles: ROLE_ADMIN }
+        # API: registro y login son públicos
         - { path: ^/api/registro, roles: PUBLIC_ACCESS, methods: [POST] }
-        # API: login es público
         - { path: ^/api/login, roles: PUBLIC_ACCESS, methods: [POST] }
-        # API: crear intento de pago requiere usuario autenticado
+        # API: pagos requieren usuario autenticado
         - { path: ^/api/crear-intento-pago, roles: ROLE_USER, methods: [POST] }
-        # API: finalizar compra requiere usuario autenticado
         - { path: ^/api/finalizar-compra, roles: ROLE_USER, methods: [POST] }
-        # API: lectura pública (GET)
+        # API: logout requiere estar autenticado
+        - { path: ^/api/logout, roles: ROLE_USER }
+        # API: lectura pública
         - { path: ^/api, roles: PUBLIC_ACCESS, methods: [GET] }
-        # Cuenta de usuario
-        - { path: ^/cuenta, roles: ROLE_USER }
         # Resto público
         - { path: ^/, roles: PUBLIC_ACCESS }
 

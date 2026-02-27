@@ -32,6 +32,9 @@ class Producto
     #[ORM\Column(length: 255)]
     private ?string $fotoPrincipal = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fotoHover = null;
+
     /** @var Collection<int, Existencia> */
     #[ORM\OneToMany(targetEntity: Existencia::class, mappedBy: 'producto')]
     private Collection $existencias;
@@ -107,11 +110,15 @@ class Producto
     }
 
     /**
-     * Transforma foto_principal.jpg en foto_principal H.jpg
-     * Ejemplo: CAMISA BORDADO.jpg → CAMISA BORDADO H.jpg
+     * Devuelve la foto hover: usa el campo guardado o calcula automáticamente
+     * añadiendo " H" antes de la extensión (ej: CAMISA.jpg → CAMISA H.jpg)
      */
     public function getFotoHover(): ?string
     {
+        if ($this->fotoHover !== null) {
+            return $this->fotoHover;
+        }
+
         if ($this->fotoPrincipal === null) {
             return null;
         }
@@ -125,6 +132,12 @@ class Producto
         $extension = substr($this->fotoPrincipal, $posicionPunto);
 
         return $nombreBase . ' H' . $extension;
+    }
+
+    public function setFotoHover(?string $fotoHover): static
+    {
+        $this->fotoHover = $fotoHover;
+        return $this;
     }
 
     /** @return Collection<int, Existencia> */

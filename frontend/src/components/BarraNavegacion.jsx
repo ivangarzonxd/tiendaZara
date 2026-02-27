@@ -7,7 +7,7 @@ import { CarritoContext } from '../context/CarritoContext';
  * Tras scroll → fondo blanco con texto negro.
  */
 export default function BarraNavegacion() {
-  const { totalItems, abrirCarrito, usuario, abrirLoginModal, cerrarSesion } =
+  const { totalItems, abrirCarrito, usuario, abrirLoginModal, cerrarSesion, abrirAdmin } =
     useContext(CarritoContext);
   const [enHero, setEnHero] = useState(true);
 
@@ -45,6 +45,11 @@ export default function BarraNavegacion() {
             <span className="barra-navegacion__usuario-nombre">
               {usuario.nombre}
             </span>
+            {usuario.rol === 'ROLE_ADMIN' && (
+              <button className="barra-navegacion__enlace barra-navegacion__enlace--admin" onClick={abrirAdmin}>
+                Panel Admin
+              </button>
+            )}
             <button className="barra-navegacion__enlace" onClick={cerrarSesion}>
               Cerrar sesión
             </button>

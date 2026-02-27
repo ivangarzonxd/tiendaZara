@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Captura TODAS las excepciones en rutas /api/* y devuelve JSON.
@@ -26,9 +27,14 @@ class ApiExceptionListener
         }
 
         $exception = $event->getThrowable();
-        $statusCode = $exception instanceof HttpExceptionInterface
-            ? $exception->getStatusCode()
-            : 500;
+
+        if ($exception instanceof AccessDeniedException) {
+            $statusCode = 403;
+        } elseif ($exception instanceof HttpExceptionInterface) {
+            $statusCode = $exception->getStatusCode();
+        } else {
+            $statusCode = 500;
+        }
 
         $response = new JsonResponse(
             ['error' => $exception->getMessage() ?: 'Error interno del servidor'],

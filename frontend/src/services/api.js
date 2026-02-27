@@ -98,3 +98,113 @@ export async function finalizarCompraAPI(lineas, paymentIntentId) {
   if (!resp.ok) throw new Error(datos.error || 'Error al procesar pedido');
   return datos;
 }
+
+/* ── Logout ── */
+
+export async function logoutUsuario() {
+  await fetch(`${API_BASE}/logout`, { credentials: 'include' });
+}
+
+/* ══════════════════════════════════════════════════
+   ══  ADMIN API  ══
+   ══════════════════════════════════════════════════ */
+
+/* ── Dashboard ── */
+
+export async function obtenerResumenAdmin() {
+  const resp = await fetch(`${API_BASE}/admin/resumen`, { credentials: 'include' });
+  if (!resp.ok) throw new Error('Error al obtener resumen');
+  return resp.json();
+}
+
+/* ── Pedidos (admin) ── */
+
+export async function obtenerPedidosAdmin() {
+  const resp = await fetch(`${API_BASE}/admin/pedidos`, { credentials: 'include' });
+  if (!resp.ok) throw new Error('Error al obtener pedidos');
+  return resp.json();
+}
+
+/* ── Productos CRUD (admin) ── */
+
+export async function obtenerProductosAdmin() {
+  const resp = await fetch(`${API_BASE}/admin/productos`, { credentials: 'include' });
+  if (!resp.ok) throw new Error('Error al obtener productos');
+  return resp.json();
+}
+
+export async function crearProductoAdmin(formData) {
+  const resp = await fetch(`${API_BASE}/admin/productos`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData, // FormData (multipart) — NO Content-Type header
+  });
+  const datos = await parsearRespuesta(resp);
+  if (!resp.ok) throw new Error(datos.error || 'Error al crear producto');
+  return datos;
+}
+
+export async function actualizarProductoAdmin(id, formData) {
+  const resp = await fetch(`${API_BASE}/admin/productos/${id}`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+  const datos = await parsearRespuesta(resp);
+  if (!resp.ok) throw new Error(datos.error || 'Error al actualizar producto');
+  return datos;
+}
+
+export async function eliminarProductoAdmin(id) {
+  const resp = await fetch(`${API_BASE}/admin/productos/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!resp.ok) {
+    const datos = await parsearRespuesta(resp);
+    throw new Error(datos.error || 'Error al eliminar producto');
+  }
+}
+
+/* ── Categorías CRUD (admin) ── */
+
+export async function obtenerCategoriasAdmin() {
+  const resp = await fetch(`${API_BASE}/admin/categorias`, { credentials: 'include' });
+  if (!resp.ok) throw new Error('Error al obtener categorías');
+  return resp.json();
+}
+
+export async function crearCategoriaAdmin(nombre) {
+  const resp = await fetch(`${API_BASE}/admin/categorias`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ nombre }),
+  });
+  const datos = await parsearRespuesta(resp);
+  if (!resp.ok) throw new Error(datos.error || 'Error al crear categoría');
+  return datos;
+}
+
+export async function actualizarCategoriaAdmin(id, nombre) {
+  const resp = await fetch(`${API_BASE}/admin/categorias/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ nombre }),
+  });
+  const datos = await parsearRespuesta(resp);
+  if (!resp.ok) throw new Error(datos.error || 'Error al actualizar categoría');
+  return datos;
+}
+
+export async function eliminarCategoriaAdmin(id) {
+  const resp = await fetch(`${API_BASE}/admin/categorias/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!resp.ok) {
+    const datos = await parsearRespuesta(resp);
+    throw new Error(datos.error || 'Error al eliminar categoría');
+  }
+}
