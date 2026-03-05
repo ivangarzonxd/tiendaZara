@@ -92,3 +92,41 @@ docker compose down -v     # Para contenedores y borra datos de MySQL
 - **Frontend**: React 18.3, Vite 6, Stripe.js
 - **BBDD**: MySQL 8.0
 - **Infraestructura**: Docker, Docker Compose, Apache 2.4
+
+## Comandos Git (en orden)
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/TU_USUARIO/tiendaZara.git
+cd tiendaZara
+
+# 2. Ver el estado de los archivos (modificados, nuevos, etc.)
+git status
+
+# 3. Añadir TODOS los archivos al staging area
+git add .
+
+# 4. (Alternativa) Añadir archivos concretos
+git add nombre_archivo.ext
+
+# 5. Crear un commit con mensaje descriptivo
+git commit -m "Descripción de los cambios realizados"
+
+# 6. Subir los cambios al repositorio remoto (rama main)
+git push origin main
+
+# 7. Descargar cambios del repositorio remoto
+git pull origin main
+
+# 8. Ver el historial de commits
+git log --oneline
+
+# 9. Crear una nueva rama
+git checkout -b nombre-rama
+
+# 10. Cambiar de rama
+git checkout nombre-rama
+
+# 11. Fusionar una rama en la actual
+git merge nombre-rama
+```
