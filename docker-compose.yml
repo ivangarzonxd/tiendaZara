@@ -21,6 +21,7 @@ services:
       CORS_ALLOW_ORIGIN: "^https?://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?$$"
       DEFAULT_URI: "http://localhost:8080"
       STRIPE_SECRET_KEY: "${STRIPE_SECRET_KEY}"
+      MAILER_DSN: "smtp://e16ca048af844e:7981aea61c8f56@sandbox.smtp.mailtrap.io:2525"
     networks:
       - red_zara
 

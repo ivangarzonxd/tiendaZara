@@ -87,12 +87,12 @@ export async function crearIntentoPago(total) {
 
 /* ── Pedidos ── */
 
-export async function finalizarCompraAPI(lineas, paymentIntentId) {
+export async function finalizarCompraAPI(lineas, paymentIntentId, datosEnvio = {}) {
   const resp = await fetch(`${API_BASE}/finalizar-compra`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ lineas, paymentIntentId }),
+    body: JSON.stringify({ lineas, paymentIntentId, datosEnvio }),
   });
   const datos = await parsearRespuesta(resp);
   if (!resp.ok) throw new Error(datos.error || 'Error al procesar pedido');

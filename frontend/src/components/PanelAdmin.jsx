@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { CarritoContext } from '../context/CarritoContext';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   obtenerResumenAdmin,
   obtenerPedidosAdmin,
@@ -21,39 +21,37 @@ const SECCIONES = ['resumen', 'productos', 'categorias', 'pedidos'];
 const ETIQUETAS = { resumen: 'Resumen', productos: 'Productos', categorias: 'Categorías', pedidos: 'Pedidos' };
 
 export default function PanelAdmin() {
-  const { cerrarAdmin } = useContext(CarritoContext);
+  const navigate = useNavigate();
   const [seccion, setSeccion] = useState('resumen');
 
   return (
-    <div className="admin-overlay">
-      <div className="admin-panel">
-        {/* Cabecera */}
-        <header className="admin-panel__cabecera">
-          <h1 className="admin-panel__titulo">PANEL ADMIN</h1>
-          <button className="admin-panel__cerrar" onClick={cerrarAdmin}>✕</button>
-        </header>
+    <div className="admin-panel admin-panel--pagina">
+      {/* Cabecera */}
+      <header className="admin-panel__cabecera">
+        <h1 className="admin-panel__titulo">PANEL ADMIN</h1>
+        <button className="admin-panel__cerrar" onClick={() => navigate('/')}>← Volver</button>
+      </header>
 
-        {/* Navegación lateral */}
-        <nav className="admin-panel__nav">
-          {SECCIONES.map((s) => (
-            <button
-              key={s}
-              className={`admin-panel__nav-btn ${seccion === s ? 'admin-panel__nav-btn--activo' : ''}`}
-              onClick={() => setSeccion(s)}
-            >
-              {ETIQUETAS[s]}
-            </button>
-          ))}
-        </nav>
+      {/* Navegación lateral */}
+      <nav className="admin-panel__nav">
+        {SECCIONES.map((s) => (
+          <button
+            key={s}
+            className={`admin-panel__nav-btn ${seccion === s ? 'admin-panel__nav-btn--activo' : ''}`}
+            onClick={() => setSeccion(s)}
+          >
+            {ETIQUETAS[s]}
+          </button>
+        ))}
+      </nav>
 
-        {/* Contenido */}
-        <main className="admin-panel__contenido">
-          {seccion === 'resumen' && <SeccionResumen />}
-          {seccion === 'productos' && <SeccionProductos />}
-          {seccion === 'categorias' && <SeccionCategorias />}
-          {seccion === 'pedidos' && <SeccionPedidos />}
-        </main>
-      </div>
+      {/* Contenido */}
+      <main className="admin-panel__contenido">
+        {seccion === 'resumen' && <SeccionResumen />}
+        {seccion === 'productos' && <SeccionProductos />}
+        {seccion === 'categorias' && <SeccionCategorias />}
+        {seccion === 'pedidos' && <SeccionPedidos />}
+      </main>
     </div>
   );
 }

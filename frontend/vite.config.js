@@ -5,9 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   
-  // El punto hace que las rutas de los assets sean relativas (./), 
-  // permitiendo que el index.html funcione correctamente desde cualquier subcarpeta.
-  base: './', 
+  // Base '/' para que los assets se carguen correctamente con React Router.
+  // Las rutas como /producto/1 necesitan paths absolutos, no relativos.
+  base: '/', 
 
   server: {
     port: 3000,

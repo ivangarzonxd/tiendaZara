@@ -1,19 +1,30 @@
 import { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { CarritoContext } from '../context/CarritoContext';
 
 /**
  * Barra de navegación fija.
- * Sobre el hero → transparente con texto blanco.
- * Tras scroll → fondo blanco con texto negro.
+ * Sobre el hero (solo en /) → transparente con texto blanco.
+ * En el resto de páginas o tras scroll → fondo blanco con texto negro.
+ * Usa Link de React Router para la navegación entre vistas.
  */
 export default function BarraNavegacion() {
-  const { totalItems, abrirCarrito, usuario, abrirLoginModal, cerrarSesion, abrirAdmin } =
+  const { totalItems, abrirCarrito, usuario, abrirLoginModal, cerrarSesion } =
     useContext(CarritoContext);
-  const [enHero, setEnHero] = useState(true);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [enHero, setEnHero] = useState(false);
+
+  const esInicio = location.pathname === '/';
 
   useEffect(() => {
+    if (!esInicio) {
+      setEnHero(false);
+      return;
+    }
+
     const hero = document.querySelector('.hero-video');
-    if (!hero) return;
+    if (!hero) { setEnHero(false); return; }
 
     const observer = new IntersectionObserver(
       ([entry]) => setEnHero(entry.isIntersecting),
@@ -22,22 +33,17 @@ export default function BarraNavegacion() {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, []);
+  }, [esInicio]);
 
   const modificador = enHero
     ? 'barra-navegacion--hero-visible'
     : 'barra-navegacion--scrolled';
 
-  const irArriba = (e) => {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <header className={`barra-navegacion ${modificador}`}>
-      <a href="#" className="barra-navegacion__logo" onClick={irArriba}>
+      <Link to="/" className="barra-navegacion__logo">
         ZARA
-      </a>
+      </Link>
 
       <nav className="barra-navegacion__zona-derecha">
         {usuario ? (
@@ -46,7 +52,10 @@ export default function BarraNavegacion() {
               {usuario.nombre}
             </span>
             {usuario.rol === 'ROLE_ADMIN' && (
-              <button className="barra-navegacion__enlace barra-navegacion__enlace--admin" onClick={abrirAdmin}>
+              <button
+                className="barra-navegacion__enlace barra-navegacion__enlace--admin"
+                onClick={() => navigate('/admin')}
+              >
                 Panel Admin
               </button>
             )}

@@ -9,7 +9,8 @@ use App\Repository\ProductoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Servicio para gestionar el carrito y finalizar compras
+ * Servicio para gestionar el carrito y finalizar compras.
+ * Crea el pedido con datos de envío y detalles.
  */
 class ServicioCarrito
 {
@@ -19,16 +20,21 @@ class ServicioCarrito
     ) {}
 
     /**
-     * Procesa un pedido a partir del JSON del carrito
+     * Procesa un pedido a partir del JSON del carrito.
      *
-     * @param array $lineas Array de ['id_producto' => int, 'cantidad' => int]
-     * @param Usuario $usuario Usuario autenticado
+     * @param array  $lineas          Array de ['id_producto' => int, 'cantidad' => int]
+     * @param Usuario $usuario        Usuario autenticado
+     * @param array  $datosEnvio      Datos de dirección de envío
      * @param string|null $stripePaymentId ID del PaymentIntent de Stripe
      * @return Pedido El pedido creado
      * @throws \InvalidArgumentException Si hay datos inválidos
      */
-    public function finalizarCompra(array $lineas, Usuario $usuario, ?string $stripePaymentId = null): Pedido
-    {
+    public function finalizarCompra(
+        array $lineas,
+        Usuario $usuario,
+        array $datosEnvio = [],
+        ?string $stripePaymentId = null
+    ): Pedido {
         if (empty($lineas)) {
             throw new \InvalidArgumentException('El carrito está vacío');
         }
@@ -36,6 +42,17 @@ class ServicioCarrito
         $pedido = new Pedido();
         $pedido->setUsuario($usuario);
         $pedido->setFecha(new \DateTime());
+
+        // Datos de envío
+        $pedido->setShippingNombre($datosEnvio['nombre'] ?? $usuario->getNombre());
+        $pedido->setShippingDireccion($datosEnvio['direccion'] ?? '');
+        $pedido->setShippingCiudad($datosEnvio['ciudad'] ?? '');
+        $pedido->setShippingCp($datosEnvio['cp'] ?? '');
+        $pedido->setShippingPais($datosEnvio['pais'] ?? 'España');
+        $pedido->setShippingTelefono($datosEnvio['telefono'] ?? null);
+
+        // Estado y pago
+        $pedido->setEstado($stripePaymentId ? 'paid' : 'pending');
 
         if ($stripePaymentId) {
             $pedido->setStripePaymentId($stripePaymentId);

@@ -1,14 +1,16 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 /* Convierte una ruta .jpg en su equivalente .webp */
 const aWebp = (ruta) => ruta?.replace(/\.jpg$/i, '.webp');
 
 /**
  * Tarjeta individual de producto.
+ * Enlaza a /producto/:id usando React Router.
  * Usa <picture> para servir WebP con fallback JPG.
  * Implementa el efecto hover con transición suave.
  */
-export default function TarjetaProducto({ producto, onClick }) {
+export default function TarjetaProducto({ producto }) {
   const [hoverError, setHoverError] = useState(false);
 
   const imgPrincipal = encodeURI(producto.fotoPrincipal);
@@ -22,7 +24,7 @@ export default function TarjetaProducto({ producto, onClick }) {
     : encodeURI(aWebp(producto.fotoHover));
 
   return (
-    <article className="producto-card" onClick={() => onClick(producto)}>
+    <Link to={`/producto/${producto.id}`} className="producto-card">
       <div className="producto-card__imagen-contenedor">
         <picture>
           <source srcSet={imgPrincipalWebp} type="image/webp" />
@@ -55,6 +57,6 @@ export default function TarjetaProducto({ producto, onClick }) {
           {parseFloat(producto.precio).toFixed(2)} €
         </p>
       </div>
-    </article>
+    </Link>
   );
 }

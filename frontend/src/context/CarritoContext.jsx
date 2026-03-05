@@ -45,7 +45,6 @@ export function CarritoProvider({ children }) {
   const [usuario, setUsuario] = useState(cargarUsuario);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
   const [loginModalAbierto, setLoginModalAbierto] = useState(false);
-  const [adminAbierto, setAdminAbierto] = useState(false);
 
   // Persistir carrito en cada cambio
   useEffect(() => {
@@ -105,11 +104,6 @@ export function CarritoProvider({ children }) {
   const abrirLoginModal = useCallback(() => setLoginModalAbierto(true), []);
   const cerrarLoginModal = useCallback(() => setLoginModalAbierto(false), []);
 
-  /* ── Panel admin ── */
-
-  const abrirAdmin = useCallback(() => setAdminAbierto(true), []);
-  const cerrarAdmin = useCallback(() => setAdminAbierto(false), []);
-
   /* ── Autenticación ── */
 
   const iniciarSesion = useCallback(async (email, password) => {
@@ -122,12 +116,11 @@ export function CarritoProvider({ children }) {
   const cerrarSesion = useCallback(async () => {
     try { await logoutUsuario(); } catch { /* silenciar */ }
     setUsuario(null);
-    setAdminAbierto(false);
   }, []);
 
   /* ── Checkout ── */
 
-  const finalizarCompra = useCallback(async (paymentIntentId) => {
+  const finalizarCompra = useCallback(async (paymentIntentId, datosEnvio = {}) => {
     if (!usuario) {
       setCarritoAbierto(false);
       setLoginModalAbierto(true);
@@ -139,7 +132,7 @@ export function CarritoProvider({ children }) {
       cantidad: it.cantidad,
     }));
 
-    const resultado = await finalizarCompraAPI(lineas, paymentIntentId);
+    const resultado = await finalizarCompraAPI(lineas, paymentIntentId, datosEnvio);
     setItems([]);
     return resultado;
   }, [usuario, items]);
@@ -168,7 +161,6 @@ export function CarritoProvider({ children }) {
       usuario,
       carritoAbierto,
       loginModalAbierto,
-      adminAbierto,
       totalItems,
       totalPrecio,
       agregarAlCarrito,
@@ -179,17 +171,15 @@ export function CarritoProvider({ children }) {
       cerrarCarrito,
       abrirLoginModal,
       cerrarLoginModal,
-      abrirAdmin,
-      cerrarAdmin,
       iniciarSesion,
       cerrarSesion,
       finalizarCompra,
     }),
     [
-      items, usuario, carritoAbierto, loginModalAbierto, adminAbierto, totalItems, totalPrecio,
+      items, usuario, carritoAbierto, loginModalAbierto, totalItems, totalPrecio,
       agregarAlCarrito, eliminarDelCarrito, actualizarCantidad, vaciarCarrito,
       abrirCarrito, cerrarCarrito, abrirLoginModal, cerrarLoginModal,
-      abrirAdmin, cerrarAdmin, iniciarSesion, cerrarSesion, finalizarCompra,
+      iniciarSesion, cerrarSesion, finalizarCompra,
     ]
   );
 

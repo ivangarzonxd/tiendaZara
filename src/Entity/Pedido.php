@@ -32,6 +32,31 @@ class Pedido
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $stripePaymentId = null;
 
+    /* ── Campos de envío ── */
+
+    #[ORM\Column(length: 150)]
+    private ?string $shippingNombre = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $shippingDireccion = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $shippingCiudad = null;
+
+    #[ORM\Column(length: 10)]
+    private ?string $shippingCp = null;
+
+    #[ORM\Column(length: 100)]
+    private ?string $shippingPais = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $shippingTelefono = null;
+
+    /* ── Estado del pedido ── */
+
+    #[ORM\Column(length: 30, options: ['default' => 'pending'])]
+    private string $estado = 'pending';
+
     /** @var Collection<int, DetallePedido> */
     #[ORM\OneToMany(targetEntity: DetallePedido::class, mappedBy: 'pedido')]
     private Collection $detalles;
@@ -99,6 +124,87 @@ class Pedido
     public function setStripePaymentId(?string $stripePaymentId): static
     {
         $this->stripePaymentId = $stripePaymentId;
+        return $this;
+    }
+
+    /* ── Getters/Setters de envío ── */
+
+    public function getShippingNombre(): ?string
+    {
+        return $this->shippingNombre;
+    }
+
+    public function setShippingNombre(string $shippingNombre): static
+    {
+        $this->shippingNombre = $shippingNombre;
+        return $this;
+    }
+
+    public function getShippingDireccion(): ?string
+    {
+        return $this->shippingDireccion;
+    }
+
+    public function setShippingDireccion(string $shippingDireccion): static
+    {
+        $this->shippingDireccion = $shippingDireccion;
+        return $this;
+    }
+
+    public function getShippingCiudad(): ?string
+    {
+        return $this->shippingCiudad;
+    }
+
+    public function setShippingCiudad(string $shippingCiudad): static
+    {
+        $this->shippingCiudad = $shippingCiudad;
+        return $this;
+    }
+
+    public function getShippingCp(): ?string
+    {
+        return $this->shippingCp;
+    }
+
+    public function setShippingCp(string $shippingCp): static
+    {
+        $this->shippingCp = $shippingCp;
+        return $this;
+    }
+
+    public function getShippingPais(): ?string
+    {
+        return $this->shippingPais;
+    }
+
+    public function setShippingPais(string $shippingPais): static
+    {
+        $this->shippingPais = $shippingPais;
+        return $this;
+    }
+
+    public function getShippingTelefono(): ?string
+    {
+        return $this->shippingTelefono;
+    }
+
+    public function setShippingTelefono(?string $shippingTelefono): static
+    {
+        $this->shippingTelefono = $shippingTelefono;
+        return $this;
+    }
+
+    /* ── Getter/Setter de estado ── */
+
+    public function getEstado(): string
+    {
+        return $this->estado;
+    }
+
+    public function setEstado(string $estado): static
+    {
+        $this->estado = $estado;
         return $this;
     }
 

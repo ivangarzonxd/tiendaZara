@@ -1,0 +1,126 @@
+{# templates/emails/confirmacion_pedido.html.twig #}
+{# Email de confirmación de pedido — Estética minimalista ZARA #}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido confirmado</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f7f7f7; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; color:#1a1a1a;">
+
+    <!-- Contenedor principal -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f7f7; padding:40px 20px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; max-width:600px; width:100%;">
+
+                    <!-- Cabecera ZARA -->
+                    <tr>
+                        <td align="center" style="padding:40px 40px 30px; border-bottom:1px solid #e0e0e0;">
+                            <h1 style="font-family:'Bodoni Moda', Georgia, serif; font-size:36px; font-weight:400; letter-spacing:8px; margin:0; color:#1a1a1a;">ZARA</h1>
+                        </td>
+                    </tr>
+
+                    <!-- Mensaje de confirmación -->
+                    <tr>
+                        <td align="center" style="padding:40px 40px 20px;">
+                            <div style="width:50px; height:50px; border-radius:50%; background:#f0fdf4; border:2px solid #bbf7d0; text-align:center; line-height:50px; font-size:24px; color:#2e7d32; margin:0 auto 20px;">✓</div>
+                            <h2 style="font-size:16px; font-weight:400; text-transform:uppercase; letter-spacing:3px; margin:0 0 8px;">Pedido confirmado</h2>
+                            <p style="font-size:13px; color:#888; margin:0;">Gracias por tu compra, {{ usuario.nombre }}.</p>
+                        </td>
+                    </tr>
+
+                    <!-- Número de pedido -->
+                    <tr>
+                        <td align="center" style="padding:10px 40px 30px;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" style="background:#f7f7f7; padding:16px 30px;">
+                                <tr>
+                                    <td align="center">
+                                        <span style="font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#888;">Nº Pedido</span><br>
+                                        <span style="font-size:22px; font-weight:600; letter-spacing:1px;">{{ pedido.numeroPedido }}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="font-size:12px; color:#888; margin:10px 0 0;">{{ pedido.fecha|date('d/m/Y H:i') }}</p>
+                        </td>
+                    </tr>
+
+                    <!-- Detalle de productos -->
+                    <tr>
+                        <td style="padding:0 40px 20px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e0e0e0;">
+                                <tr>
+                                    <td style="padding:16px 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#888;">Producto</td>
+                                    <td align="center" style="padding:16px 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#888;">Ud.</td>
+                                    <td align="right" style="padding:16px 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#888;">Precio</td>
+                                </tr>
+                                {% for item in detalles %}
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:12px 0; font-size:13px; text-transform:uppercase; letter-spacing:0.5px;">{{ item.producto }}</td>
+                                    <td align="center" style="padding:12px 0; font-size:13px; color:#666;">×{{ item.cantidad }}</td>
+                                    <td align="right" style="padding:12px 0; font-size:13px;">{{ item.subtotal }} €</td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Envío -->
+                    <tr>
+                        <td style="padding:0 40px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e0e0e0;">
+                                <tr>
+                                    <td style="padding:12px 0; font-size:13px; color:#666;">Envío</td>
+                                    <td align="right" style="padding:12px 0; font-size:13px; color:{% if envioGratis %}#2e7d32{% else %}#1a1a1a{% endif %};">
+                                        {% if envioGratis %}GRATIS{% else %}4.95 €{% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Total -->
+                    <tr>
+                        <td style="padding:0 40px 30px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #1a1a1a;">
+                                <tr>
+                                    <td style="padding:16px 0; font-size:14px; font-weight:500; text-transform:uppercase; letter-spacing:2px;">Total</td>
+                                    <td align="right" style="padding:16px 0; font-size:16px; font-weight:600;">{{ pedido.total }} €</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Dirección de envío -->
+                    <tr>
+                        <td style="padding:0 40px 30px;">
+                            <div style="background:#f7f7f7; padding:20px;">
+                                <p style="font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#888; margin:0 0 10px;">Dirección de envío</p>
+                                <p style="font-size:13px; line-height:1.6; margin:0;">
+                                    {{ pedido.shippingNombre }}<br>
+                                    {{ pedido.shippingDireccion }}<br>
+                                    {{ pedido.shippingCp }} {{ pedido.shippingCiudad }}<br>
+                                    {{ pedido.shippingPais }}
+                                    {% if pedido.shippingTelefono %}<br>Tel: {{ pedido.shippingTelefono }}{% endif %}
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="padding:30px 40px; border-top:1px solid #e0e0e0; background:#fafafa;">
+                            <p style="font-size:11px; color:#888; margin:0 0 5px; letter-spacing:1px;">ZARA — Proyecto académico</p>
+                            <p style="font-size:11px; color:#aaa; margin:0;">Este email se ha generado automáticamente.</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

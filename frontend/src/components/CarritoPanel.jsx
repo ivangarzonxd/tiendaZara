@@ -1,11 +1,12 @@
 ﻿import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CarritoContext } from '../context/CarritoContext';
 import PagoStripe from './PagoStripe';
 import PagoExitoso from './PagoExitoso';
 
 /**
  * Panel lateral del carrito (slide-in).
- * Flujo: Carrito -> Pago Stripe -> Pedido confirmado.
+ * Flujo: Carrito -> Checkout (/checkout) o pago inline (fallback).
  * Metodologia BEM: bloque .carrito-panel
  */
 export default function CarritoPanel() {
@@ -13,6 +14,7 @@ export default function CarritoPanel() {
     items, carritoAbierto, cerrarCarrito, eliminarDelCarrito,
     actualizarCantidad, totalPrecio, usuario, abrirLoginModal, finalizarCompra,
   } = useContext(CarritoContext);
+  const navigate = useNavigate();
 
   // 'carrito' | 'pago' | 'exito'
   const [vista, setVista] = useState('carrito');
@@ -26,8 +28,9 @@ export default function CarritoPanel() {
       abrirLoginModal();
       return;
     }
-    setMensajeError('');
-    setVista('pago');
+    // Redirigir a la página de checkout
+    cerrarCarrito();
+    navigate('/checkout');
   };
 
   /* -- Stripe confirma pago -> registrar pedido en backend -- */

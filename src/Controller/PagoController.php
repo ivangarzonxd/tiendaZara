@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Usuario;
 use App\Service\ServicioCarrito;
+use App\Service\ServicioEmail;
+use Psr\Log\LoggerInterface;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -74,11 +76,15 @@ class PagoController extends AbstractController
     /**
      * POST /api/finalizar-compra
      * Registra el pedido en BBDD tras confirmar el pago en Stripe.
-     * Body JSON: { "lineas": [...], "paymentIntentId": "pi_xxx" }
+     * Body JSON: { "lineas": [...], "paymentIntentId": "pi_xxx", "datosEnvio": {...} }
      */
     #[Route('/api/finalizar-compra', name: 'api_finalizar_compra', methods: ['POST'])]
-    public function finalizarCompra(Request $peticion, ServicioCarrito $servicioCarrito): JsonResponse
-    {
+    public function finalizarCompra(
+        Request $peticion,
+        ServicioCarrito $servicioCarrito,
+        ServicioEmail $servicioEmail,
+        LoggerInterface $logger
+    ): JsonResponse {
         /** @var \App\Entity\Usuario|null $usuario */
         $usuario = $this->getUser();
 
@@ -93,6 +99,7 @@ class PagoController extends AbstractController
         }
 
         $paymentIntentId = $datos['paymentIntentId'] ?? null;
+        $datosEnvio      = $datos['datosEnvio'] ?? [];
 
         // Verificar el pago en Stripe si se proporciona paymentIntentId
         if ($paymentIntentId) {
@@ -109,7 +116,23 @@ class PagoController extends AbstractController
         }
 
         try {
-            $pedido = $servicioCarrito->finalizarCompra($datos['lineas'], $usuario, $paymentIntentId);
+            $pedido = $servicioCarrito->finalizarCompra(
+                $datos['lineas'],
+                $usuario,
+                $datosEnvio,
+                $paymentIntentId
+            );
+
+            // Enviar email de confirmación (no bloquea si falla)
+            try {
+                $servicioEmail->enviarConfirmacionPedido($pedido);
+                $logger->info('Email de confirmación enviado para pedido ' . $pedido->getNumeroPedido());
+            } catch (\Exception $e) {
+                $logger->error('Error al enviar email de confirmación: ' . $e->getMessage(), [
+                    'pedido' => $pedido->getNumeroPedido(),
+                    'exception' => $e::class,
+                ]);
+            }
 
             // Construir respuesta con detalles del pedido
             $detallesRespuesta = [];
